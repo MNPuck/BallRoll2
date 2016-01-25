@@ -101,25 +101,27 @@ public class Ball extends AbstractGameObject {
 		
 		if (saveTileSlant == Constants.NE) {
 			
-			velocity.x = velocity.y * 2;
+			velocity.x = velocity.x * 2;
+			velocity.y = velocity.x * .5f;
 			
 		}
 		
 		if (saveTileSlant == Constants.NW) {
 			
-			velocity.x = velocity.y * - 2;
+			velocity.x = velocity.x * 2;
+			velocity.y = velocity.x * -.5f;
 			
 		}
 		
 		if (saveTileSlant == Constants.SE) {
 			
-			velocity.x = velocity.y * - 2;
+			velocity.x = velocity.x * 2;
 			
 		}
 		
 		if (saveTileSlant == Constants.SW) {
 			
-			velocity.x = velocity.y * 2;
+			velocity.x = velocity.x * 2;
 			
 		}
 		
@@ -216,41 +218,25 @@ public class Ball extends AbstractGameObject {
 			
 			if (tileSlant == Constants.NE) {
 				
-				if (velocity.x > velocity.y)
-					velocity.y = velocity.x;
-				
-				if (velocity.y > velocity.x)
-					velocity.x = velocity.y;
+				velocity.y = velocity.x * .25f;
 				
 			}
 			
 			if (tileSlant == Constants.NW) {
-				
-				if (velocity.x * -1 > velocity.y)
-					velocity.y = velocity.x * -1;
-				
-				if (velocity.y * -1 < velocity.x)
-					velocity.x = velocity.y * - 1;
-				
+			
+				velocity.y = velocity.x * -.25f;
+
 			}
 			
 			if (tileSlant == Constants.SE) {
-		
-				if (velocity.x * -1 < velocity.y)
-					velocity.y = velocity.x * -1;
 				
-				if (velocity.y * -1 < velocity.x)
-					velocity.x = velocity.y * - 1; 
+				velocity.y = velocity.x * -1;
 		
 			}
 			
 			if (tileSlant == Constants.SW) {
 				
-				if (velocity.x < velocity.y)
-					velocity.y = velocity.x;
-				
-				if (velocity.y < velocity.x)
-					velocity.x = velocity.y;
+				velocity.y = velocity.x;
 				
 			}	
 			
@@ -262,14 +248,14 @@ public class Ball extends AbstractGameObject {
 		if (tileSlant == Constants.NE) {
 			
 			slantXAxis += Constants.SLANT_X_AXIS;
-			slantYAxis += - Constants.SLANT_Y_AXIS;
+			slantYAxis += - Constants.SLANT_Y_AXIS * .25f;
 			
 		}
 		
 		if (tileSlant == Constants.NW) {
 			
 			slantXAxis += - Constants.SLANT_X_AXIS;
-			slantYAxis += - Constants.SLANT_Y_AXIS;
+			slantYAxis += - Constants.SLANT_Y_AXIS * .25f;
 			
 		}
 		
