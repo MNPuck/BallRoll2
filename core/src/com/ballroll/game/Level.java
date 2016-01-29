@@ -111,8 +111,8 @@ public class Level {
 	// movement type (1 = touch, 2 = swipe)
 	private int movementType;
 	
-	// current ball height
-	private int ballHeight;
+	// tile height
+	private int tileHeight;
 	
 	// save ball height
 	private int saveBallHeight;
@@ -134,7 +134,7 @@ public class Level {
 		levelNumber = levelNumberIn;
 		
 		ballScreenPos = new Vector2(0,0);
-		ballScreenPos.y += .50f;
+		// ballScreenPos.y += .50f;
 		
 		// Ball
 		ball = new Ball(ballScreenPos);
@@ -181,8 +181,8 @@ public class Level {
 		// movement type (read from prefs eventuaully)
 		movementType = 1;
 		
-		// ball heights
-		ballHeight = 0;
+		// tile heights
+		tileHeight = 0;
 		saveBallHeight = 0;
 		
 		// slant
@@ -221,7 +221,7 @@ public class Level {
 		
 		if (isRightClicked) {
 			
-			ball.setBallPosition(scrCoords);
+			ball.setBallPosition(scrCoords, tileSlant, tileHeight);
 			
 		}
 		
@@ -257,13 +257,13 @@ public class Level {
 			
 		}
 		
-		// ballScreenPos.x = assignBallScreenPosX(currentMoveDirection);
-		// ballScreenPos.y = assignBallScreenPosY(currentMoveDirection);
+		// ballScreenPos.x = assignBallScreenPosX(currentMoveDirection, ballHeight);
+		// ballScreenPos.y = assignBallScreenPosY(currentMoveDirection, ballHeight);
 		
 		ballScreenPos.x = ball.returnCenterBallPosX();
 		ballScreenPos.y = ball.returnCenterBallPosY();
 		
-		ballMapPos = screenToMap(ballScreenPos, ballHeight, false);
+		ballMapPos = screenToMap(ballScreenPos, false);
 	
 		int mapX = (int) ballMapPos.x;
 		int mapY =  Constants.MAP_HEIGHT - (int) ballMapPos.y - 1;
@@ -273,12 +273,14 @@ public class Level {
 		if (cell != null) {
 			
 			String height = (String) cell.getTile().getProperties().get("Height");
-			ballHeight = Integer.parseInt(height.trim());
+			tileHeight = Integer.parseInt(height.trim());
 			
 			String slant = (String) cell.getTile().getProperties().get("Slant");
 			tileSlant = Integer.parseInt(slant.trim());
 			
 			// drop down to flat tile
+			
+			/*
 			
 			if (ballHeight < saveBallHeight &&
 				tileSlant == Constants.NIL ) {
@@ -287,6 +289,8 @@ public class Level {
 				saveBallHeight = ballHeight;
 				
 			}
+			
+			*/
 			
 			/*
 						
@@ -300,7 +304,7 @@ public class Level {
 		
 		if (firstUpdate) {
 			
-			saveBallHeight = ballHeight;
+			saveBallHeight = tileHeight;
 			firstUpdate = false;
 			
 			
@@ -483,64 +487,88 @@ public class Level {
 		
 		// ball update
 		
-		ball.update(deltaTime, moveDirection, dropDistance, tileSlant);
+		ball.update(deltaTime, moveDirection, dropDistance, tileSlant, tileHeight);
 		moveDirection = Constants.NIL;
 	
 	}
 	
-	private float assignBallScreenPosX(int direction) {
+	private float assignBallScreenPosX(int direction, int ballHeight) {
+		
+		float returnX = 0;
 		
 		switch (direction) {
 		
 			case Constants.NIL:
-				return ball.returnCenterBallPosX();
+				returnX = ball.returnCenterBallPosX();
+				break;
 			
 			case Constants.NW:
-				return ball.returnNWBallPosX();
+				returnX = ball.returnNWBallPosX();
+				break;
 				
 			case Constants.NE:
-				return ball.returnNEBallPosX();
+				returnX = ball.returnNEBallPosX();
+				break;
 				
 			case Constants.SW:
-				return ball.returnSWBallPosX();
+				returnX = ball.returnSWBallPosX();
+				break;
 				
 			case Constants.SE:
-				return ball.returnSEBallPosX();
+				returnX = ball.returnSEBallPosX();
+				break;
 			
 			default:
-				return ball.returnCenterBallPosX();
+				returnX = ball.returnCenterBallPosX();
+				break;
 		
 		}
 		
+		return returnX;
+		
 	}
 	
-	private float assignBallScreenPosY(int direction) {
+	private float assignBallScreenPosY(int direction, int ballHeight) {
+		
+		float returnY = 0;
 			
 		switch (direction) {
 		
 			case Constants.NIL:
-				return ball.returnCenterBallPosY();
+				returnY = ball.returnCenterBallPosY();
+				break;
 				
 			case Constants.NW:
-				return ball.returnNWBallPosY();
+				returnY = ball.returnNWBallPosY();
+				returnY = returnY - (ballHeight * .5f);
+				break;
 				
 			case Constants.NE:
-				return ball.returnNEBallPosY();
+				returnY = ball.returnNEBallPosY();
+				returnY = returnY - (ballHeight * .5f);
+				break;
 				
 			case Constants.SW:
-				return ball.returnSWBallPosY();
+				returnY = ball.returnSWBallPosY();
+				returnY = returnY - (ballHeight * .5f);
+				break;
 				
 			case Constants.SE:
-				return ball.returnSEBallPosY();
+				returnY = ball.returnSEBallPosY();
+				returnY = returnY - (ballHeight * .5f);
+				break;
 				
 			default:
-				return ball.returnCenterBallPosY();
+				returnY = ball.returnCenterBallPosY();
+				break;
 	
 		}
 		
+		return returnY;
+		
 	}
 	
-	private Vector2 screenToMap (Vector2 position, int ballHeight, boolean clamp) {
+	private Vector2 screenToMap (Vector2 position, boolean clamp) {
 		
 		Vector2 mapPos = new Vector2(0,0);
 		
@@ -548,7 +576,9 @@ public class Level {
 		float Height = 1;
 		
 		float screenPosX = position.x;
-		float screenPosY = - position.y + ( ballHeight * .5f);
+		float screenPosY = - position.y;
+		
+		// float screenPosY = - position.y + ( ballHeight * .5f);
 		
 		// calculate map position
 		

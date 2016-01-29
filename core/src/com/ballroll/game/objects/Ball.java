@@ -26,6 +26,9 @@ public class Ball extends AbstractGameObject {
 	
 	private int saveTileSlant;
 	
+	private Vector2 screenPosition;
+	private float savePosY;
+	
 	public Ball (Vector2 ballOrigin) {
 		
 		setPosition(ballOrigin);
@@ -82,52 +85,33 @@ public class Ball extends AbstractGameObject {
 		
 		saveTileSlant = Constants.NIL;
 		
+		// screen position
+		screenPosition = new Vector2();
+		
 	}
 	
-	public void update(float deltaTime, int moveDirection, int dropDistance, int tileSlant) {
+	public void update(float deltaTime, int moveDirection, int dropDistance, int tileSlant, int tileHeight) {
 		
 		if (tileSlant == Constants.NIL)
 			applyMovement(deltaTime, moveDirection, dropDistance, tileSlant);
 		else
 			applySlant(deltaTime, moveDirection, dropDistance, tileSlant);
 		
+		screenPosition = updateScreenPosition(tileSlant, tileHeight, moveDirection);
+		
 	
 	}
 	
 	private void applyMovement(float deltaTime, int moveDirection, int dropDistance, int tileSlant) {
 		
-		
-		// if ball just moved down ramp even out the velocity
-		
-		if (saveTileSlant == Constants.NE) {
-			
-			velocity.x = velocity.x * 2;
-			velocity.y = velocity.x * .5f;
-			
-		}
-		
-		if (saveTileSlant == Constants.NW) {
-			
-			velocity.x = velocity.x * 2;
-			velocity.y = velocity.x * -.5f;
-			
-		}
-		
-		if (saveTileSlant == Constants.SE) {
-			
-			velocity.x = velocity.x * 2;
-			
-		}
-		
-		if (saveTileSlant == Constants.SW) {
-			
-			velocity.x = velocity.x * 2;
-			
-		}
-		
 		// reset save tile slant
 		
 		saveTileSlant = Constants.NIL;
+		
+		// reset slant axis
+		
+		slantXAxis = 0;
+		slantYAxis = 0;
 		
 		// apply player movement
 		
@@ -165,36 +149,10 @@ public class Ball extends AbstractGameObject {
 			moveYAxis = 0;
 			
 		}
-
-		if (velocity.x != 0) {
-			
-			// Apply friction
-			if (velocity.x > 0) {
-				velocity.x = Math.max(velocity.x - friction.x * deltaTime, 0);
-			} else {
-				velocity.x = Math.min(velocity.x + friction.x * deltaTime, 0);
-			}
-		}
-			
-		velocity.x += accleration.x * deltaTime * moveXAxis;
-		velocity.x = MathUtils.clamp(velocity.x, -terminalVelocity.x, terminalVelocity.x);
 		
-		position.x += velocity.x * deltaTime;
+		applyForce(deltaTime, moveXAxis, moveYAxis);
 		
-		if (velocity.y != 0) {
-				
-			// Apply friction
-			if (velocity.y > 0) {
-				velocity.y = Math.max(velocity.y - friction.y * deltaTime, 0);
-			} else {
-				velocity.y = Math.min(velocity.y + friction.y * deltaTime, 0);
-			}
-		}
-		
-		velocity.y += accleration.y * deltaTime * moveYAxis;
-		velocity.y = MathUtils.clamp(velocity.y, -terminalVelocity.y, terminalVelocity.y);
-			
-		position.y += velocity.y * deltaTime;	
+		/*
 		
 		// apply down force for straight down drop to lower tile
 		
@@ -205,57 +163,37 @@ public class Ball extends AbstractGameObject {
 			
 		}
 		
+		*/
+		
 	}
 	
 	private void applySlant(float deltaTime, int moveDirection, int dropDistance, int tileSlant) {
 		
-		// if first time applying slant: reset slant axis and even out velocities
+		// reset movement axis
+		moveXAxis = 0;
+		moveYAxis = 0;
 		
-		if (tileSlant != saveTileSlant) {
-			
-			slantXAxis = 0;
-			slantYAxis = 0;
-			
-			if (tileSlant == Constants.NE) {
-				
-				velocity.y = velocity.x * .25f;
-				
-			}
-			
-			if (tileSlant == Constants.NW) {
-			
-				velocity.y = velocity.x * -.25f;
-
-			}
-			
-			if (tileSlant == Constants.SE) {
-				
-				velocity.y = velocity.x * -1;
+		// save position y if first applying slant
 		
-			}
+		if (saveTileSlant != tileSlant) {
 			
-			if (tileSlant == Constants.SW) {
-				
-				velocity.y = velocity.x;
-				
-			}	
+			savePosY = position.y;
 			
 		}
-	
 		
-		// apply slant movement based on what tile the ball is touching
+		// apply slant movement
 		
 		if (tileSlant == Constants.NE) {
 			
 			slantXAxis += Constants.SLANT_X_AXIS;
-			slantYAxis += - Constants.SLANT_Y_AXIS * .25f;
+			slantYAxis += Constants.SLANT_Y_AXIS;
 			
 		}
 		
 		if (tileSlant == Constants.NW) {
 			
 			slantXAxis += - Constants.SLANT_X_AXIS;
-			slantYAxis += - Constants.SLANT_Y_AXIS * .25f;
+			slantYAxis += Constants.SLANT_Y_AXIS;
 			
 		}
 		
@@ -275,67 +213,72 @@ public class Ball extends AbstractGameObject {
 		
 		saveTileSlant = tileSlant;
 		
+		applyForce(deltaTime, slantXAxis, slantYAxis);
+		
+	}
+	
+	private void applyForce(float deltaTime, float applyXAxis, float applyYAxis) {
+		
 		if (velocity.x != 0) {
 			
 			// Apply friction
 			if (velocity.x > 0) {
-				velocity.x = Math.max(velocity.x - frictionSlant.x * deltaTime, 0);
+				velocity.x = Math.max(velocity.x - friction.x * deltaTime, 0);
 			} else {
-				velocity.x = Math.min(velocity.x + frictionSlant.x * deltaTime, 0);
+				velocity.x = Math.min(velocity.x + friction.x * deltaTime, 0);
 			}
-			
 		}
+			
+		velocity.x += accleration.x * deltaTime * applyXAxis;
+		velocity.x = MathUtils.clamp(velocity.x, -terminalVelocity.x, terminalVelocity.x);
 		
-		velocity.x += acclerationSlant.x * deltaTime * slantXAxis;
-		velocity.x = MathUtils.clamp(velocity.x, -terminalVelocitySlant.x, terminalVelocitySlant.x);
-		
+		position.x += velocity.x * deltaTime;
 		
 		if (velocity.y != 0) {
-			
+				
 			// Apply friction
 			if (velocity.y > 0) {
-				velocity.y = Math.max(velocity.y - frictionSlant.y * deltaTime, 0);
+				velocity.y = Math.max(velocity.y - friction.y * deltaTime, 0);
 			} else {
-				velocity.y = Math.min(velocity.y + frictionSlant.y * deltaTime, 0);
+				velocity.y = Math.min(velocity.y + friction.y * deltaTime, 0);
 			}
-			
 		}
 		
-		velocity.y += acclerationSlant.y * deltaTime * slantYAxis;
-	  	velocity.y = MathUtils.clamp(velocity.y, -terminalVelocitySlant.y, terminalVelocitySlant.y);
-	  	
-	  	/*
-		
-		if (tileSlant == Constants.NE &&
-			returnCurrentDirection() == Constants.NE) {
+		velocity.y += accleration.y * deltaTime * applyYAxis;
+		velocity.y = MathUtils.clamp(velocity.y, -terminalVelocity.y, terminalVelocity.y);
 			
-			velocity.y = velocity.x;
-			
-		}
-		
-		if (tileSlant == Constants.NW) {
-			
-			velocity.y =  - velocity.x;
-			
-		}
-		
-		if (tileSlant == Constants.SE) {
-			
-			velocity.y = - velocity.x;
-			
-		}
-		
-		if (tileSlant == Constants.SW) {
-			
-			velocity.y = velocity.x;
-			
-		}
-		
-	    */	
-		  	
-	  	position.x += velocity.x * deltaTime;
-	  	position.y += velocity.y * deltaTime;
+		position.y += velocity.y * deltaTime;	
 	
+	}
+	
+	private Vector2 updateScreenPosition(int tileSlant, int tileHeight, int moveDirection) {
+		
+		Vector2 returnPosition = new Vector2();
+		float posYDiff = 0;
+		
+		if (savePosY > position.y)
+			posYDiff = savePosY - position.y;
+		else
+			posYDiff = position.y - savePosY;
+		
+		returnPosition.x = position.x;
+		
+		if (tileSlant == Constants.NIL)
+			returnPosition.y = position.y + (tileHeight * .5f);
+		
+		if (tileSlant == Constants.NW)
+			returnPosition.y = position.y + (tileHeight * .5f - posYDiff);
+		
+		if (tileSlant == Constants.NE)
+			returnPosition.y = position.y + (tileHeight * .5f - posYDiff);
+		
+		if (tileSlant == Constants.SW)
+			returnPosition.y = position.y + (tileHeight * .5f - posYDiff);
+		
+		if (tileSlant == Constants.SE)
+			returnPosition.y = position.y + (tileHeight * .5f - posYDiff);
+		
+		return returnPosition;
 		
 	}
 	
@@ -465,7 +408,7 @@ public class Ball extends AbstractGameObject {
 		
 	}
 	
-	public void setBallPosition(Vector2 screenCoords){
+	public void setBallPosition(Vector2 screenCoords, int tileSlant, int tileHeight){
 		
 		velocity.x = 0;
 		velocity.y = 0;
@@ -473,11 +416,14 @@ public class Ball extends AbstractGameObject {
 		position.x = screenCoords.x;
 		position.y = screenCoords.y;
 		
+		screenPosition = updateScreenPosition(tileSlant, tileHeight, Constants.NIL);
+		
+		
 	}
 	
 	public void render (SpriteBatch batch) {
 		
-		batch.draw(Ball, position.x, position.y, 0, 0, dimension.x, dimension.y, 1, 1, rotation);		
+		batch.draw(Ball, screenPosition.x, screenPosition.y, 0, 0, dimension.x, dimension.y, 1, 1, rotation);		
 		
 	}	
 	
