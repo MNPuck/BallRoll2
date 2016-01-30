@@ -22,12 +22,15 @@ public class Ball extends AbstractGameObject {
 	private float slantXAxis;
 	private float slantYAxis;
 	
-	private int height;
+	private int ballHeight;
 	
 	private int saveTileSlant;
+	private int saveBallDirection;
 	
 	private Vector2 screenPosition;
 	private float savePosY;
+	
+	private boolean bounce;
 	
 	public Ball (Vector2 ballOrigin) {
 		
@@ -52,18 +55,12 @@ public class Ball extends AbstractGameObject {
 		
 		// init physics values
 		
-		terminalVelocity.x = 4.0f;
-		terminalVelocity.y = 2.0f;
-		terminalVelocitySlant.x = 10.0f;
-		terminalVelocitySlant.y = 10.0f;
-		friction.x = 1f;
-		friction.y = .5f;
-		frictionSlant.x = 1f;
-		frictionSlant.y = 1f;
+		terminalVelocity.x = 12.0f;
+		terminalVelocity.y = 6.0f;
+		friction.x = 2f;
+		friction.y = 1f;
 		accleration.x = 20;
 		accleration.y = 20;
-		acclerationSlant.x = 5;
-		acclerationSlant.y = 5;
 		velocity.x = 0;
 		velocity.y = 0;
 		
@@ -79,34 +76,71 @@ public class Ball extends AbstractGameObject {
 		
 		// height
 		
-		height = 0;
+		ballHeight = 2;
 		
 		// save tile slant
 		
-		saveTileSlant = Constants.NIL;
+		saveTileSlant = 0;
+		
+		// save ball direction
+		
+		saveBallDirection = 0;
 		
 		// screen position
 		screenPosition = new Vector2();
+		
+		// bounce
+		bounce = false;
 		
 	}
 	
 	public void update(float deltaTime, int moveDirection, int dropDistance, int tileSlant, int tileHeight) {
 		
+		// create bounce if ball height is less then tile height
+		
+		if (ballHeight < tileHeight &&
+			tileSlant == Constants.NIL) {
+			
+			if (moveDirection == Constants.NE)
+				moveDirection = Constants.SW;
+			
+			if (moveDirection == Constants.NW)
+				moveDirection = Constants.SE;
+			
+			if (moveDirection == Constants.SW)
+				moveDirection = Constants.NE;
+				
+			if (moveDirection == Constants.SE)
+				moveDirection = Constants.NW;
+			
+			velocity.x = - velocity.x;
+			velocity.y = - velocity.y;
+			
+			bounce = true;
+			
+		}
+		
 		if (tileSlant == Constants.NIL)
-			applyMovement(deltaTime, moveDirection, dropDistance, tileSlant);
+			applyMovement(deltaTime, moveDirection, dropDistance, tileHeight);
 		else
-			applySlant(deltaTime, moveDirection, dropDistance, tileSlant);
+			applySlant(deltaTime, moveDirection, dropDistance, tileSlant, tileHeight);
 		
 		screenPosition = updateScreenPosition(tileSlant, tileHeight, moveDirection);
+		
+		saveTileSlant = tileSlant;
+		
+		ballHeight = tileHeight;
+		
+		bounce = false;
 		
 	
 	}
 	
-	private void applyMovement(float deltaTime, int moveDirection, int dropDistance, int tileSlant) {
+	private void applyMovement(float deltaTime, int moveDirection, int dropDistance, int tileHeight) {
 		
 		// reset save tile slant
 		
-		saveTileSlant = Constants.NIL;
+		// saveTileSlant = Constants.NIL;
 		
 		// reset slant axis
 		
@@ -167,7 +201,7 @@ public class Ball extends AbstractGameObject {
 		
 	}
 	
-	private void applySlant(float deltaTime, int moveDirection, int dropDistance, int tileSlant) {
+	private void applySlant(float deltaTime, int moveDirection, int dropDistance, int tileSlant, int tileHeight) {
 		
 		// reset movement axis
 		moveXAxis = 0;
@@ -178,6 +212,7 @@ public class Ball extends AbstractGameObject {
 		if (saveTileSlant != tileSlant) {
 			
 			savePosY = position.y;
+			saveBallDirection = returnCurrentDirection();
 			
 		}
 		
@@ -210,8 +245,6 @@ public class Ball extends AbstractGameObject {
 			slantYAxis += - Constants.SLANT_Y_AXIS;
 			
 		}
-		
-		saveTileSlant = tileSlant;
 		
 		applyForce(deltaTime, slantXAxis, slantYAxis);
 		
@@ -254,6 +287,16 @@ public class Ball extends AbstractGameObject {
 	private Vector2 updateScreenPosition(int tileSlant, int tileHeight, int moveDirection) {
 		
 		Vector2 returnPosition = new Vector2();
+		
+		if (bounce) {
+			
+			returnPosition.x = position.x;
+			returnPosition.y = position.y;
+			
+			return returnPosition;
+			
+		}
+			
 		float posYDiff = 0;
 		
 		if (savePosY > position.y)
@@ -263,20 +306,24 @@ public class Ball extends AbstractGameObject {
 		
 		returnPosition.x = position.x;
 		
-		if (tileSlant == Constants.NIL)
+		if (tileSlant == Constants.NIL) {
+		
 			returnPosition.y = position.y + (tileHeight * .5f);
+			return returnPosition;
+			
+		}
 		
-		if (tileSlant == Constants.NW)
+		if (tileSlant == saveBallDirection) {
+		
 			returnPosition.y = position.y + (tileHeight * .5f - posYDiff);
 		
-		if (tileSlant == Constants.NE)
-			returnPosition.y = position.y + (tileHeight * .5f - posYDiff);
+		}
 		
-		if (tileSlant == Constants.SW)
-			returnPosition.y = position.y + (tileHeight * .5f - posYDiff);
+		else {
 		
-		if (tileSlant == Constants.SE)
-			returnPosition.y = position.y + (tileHeight * .5f - posYDiff);
+			returnPosition.y = position.y + ((tileHeight - 1) * .5f + posYDiff);
+			
+		}
 		
 		return returnPosition;
 		
@@ -416,8 +463,7 @@ public class Ball extends AbstractGameObject {
 		position.x = screenCoords.x;
 		position.y = screenCoords.y;
 		
-		screenPosition = updateScreenPosition(tileSlant, tileHeight, Constants.NIL);
-		
+		screenPosition = updateScreenPosition(tileSlant, tileHeight, Constants.NIL);	
 		
 	}
 	

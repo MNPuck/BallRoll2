@@ -109,9 +109,9 @@ public class Constants {
 	public static final int MOVE_Y_AXIS = 1;
 	
 	// Slant X Value
-	public static final float SLANT_X_AXIS = .05f;
+	public static final float SLANT_X_AXIS = .04f;
 	
 	// Slant Y Value
-	public static final float SLANT_Y_AXIS = .025f;
+	public static final float SLANT_Y_AXIS = .02f;
 		
 }

@@ -15,11 +15,8 @@ public abstract class AbstractGameObject {
 	
 	public Vector2 velocity;
 	public Vector2 terminalVelocity;
-	public Vector2 terminalVelocitySlant;
 	public Vector2 friction;
-	public Vector2 frictionSlant;
 	public Vector2 accleration;
-	public Vector2 acclerationSlant;
 	
 	public Rectangle bounds;
 
@@ -32,11 +29,8 @@ public abstract class AbstractGameObject {
 		rotation = 0;
 		velocity = new Vector2();
 		terminalVelocity = new Vector2();
-		terminalVelocitySlant = new Vector2();
 		friction = new Vector2();
-		frictionSlant = new Vector2();
 		accleration = new Vector2();
-		acclerationSlant = new Vector2();
 		
 		bounds = new Rectangle();
 		
