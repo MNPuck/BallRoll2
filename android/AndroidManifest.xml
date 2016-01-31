@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mygdx.game"
+    package="com.ballroll.game.android"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -9,10 +9,10 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/GdxTheme" >
+        android:label="BallRoll"
+        android:theme="@style/GdxTheme" android:allowTaskReparenting="false">
         <activity
-            android:name="com.mygdx.game.AndroidLauncher"
+            android:name="com.ballroll.game.android.AndroidLauncher"
             android:label="@string/app_name" 
             android:screenOrientation="landscape"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
