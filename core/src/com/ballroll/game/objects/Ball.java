@@ -94,31 +94,11 @@ public class Ball extends AbstractGameObject {
 		
 	}
 	
-	public void update(float deltaTime, int moveDirection, int dropDistance, int tileSlant, int tileHeight) {
+	public void update(float deltaTime, int moveDirection, int dropDistance, int tileSlant, int antiSlant, int tileHeight) {
 		
 		// create bounce if ball height is less then tile height
 		
-		if (ballHeight < tileHeight &&
-			tileSlant == Constants.NIL) {
-			
-			if (moveDirection == Constants.NE)
-				moveDirection = Constants.SW;
-			
-			if (moveDirection == Constants.NW)
-				moveDirection = Constants.SE;
-			
-			if (moveDirection == Constants.SW)
-				moveDirection = Constants.NE;
-				
-			if (moveDirection == Constants.SE)
-				moveDirection = Constants.NW;
-			
-			velocity.x = - velocity.x;
-			velocity.y = - velocity.y;
-			
-			bounce = true;
-			
-		}
+		checkForBounce(moveDirection, tileSlant, antiSlant, tileHeight);
 		
 		if (tileSlant == Constants.NIL)
 			applyMovement(deltaTime, moveDirection, dropDistance, tileHeight);
@@ -136,11 +116,47 @@ public class Ball extends AbstractGameObject {
 	
 	}
 	
+	private void checkForBounce(int moveDirection, int tileSlant, int antiSlant, int tileHeight) {
+		
+		if (ballHeight < tileHeight) {
+			
+			if (tileSlant == Constants.NIL) {
+				
+				bounce = true;
+				
+			}
+			
+			if (returnCurrentDirection() != tileSlant &&
+				returnCurrentDirection() != antiSlant) {
+				
+				bounce = true;
+				
+			}
+			
+		}
+		
+		if (bounce) {
+			
+			if (moveDirection == Constants.NE)
+				moveDirection = Constants.SW;
+			
+			if (moveDirection == Constants.NW)
+				moveDirection = Constants.SE;
+			
+			if (moveDirection == Constants.SW)
+				moveDirection = Constants.NE;
+				
+			if (moveDirection == Constants.SE)
+				moveDirection = Constants.NW;
+				
+				velocity.x = - velocity.x;
+				velocity.y = - velocity.y;
+			
+		}
+		
+	}
+	
 	private void applyMovement(float deltaTime, int moveDirection, int dropDistance, int tileHeight) {
-		
-		// reset save tile slant
-		
-		// saveTileSlant = Constants.NIL;
 		
 		// reset slant axis
 		
@@ -185,19 +201,6 @@ public class Ball extends AbstractGameObject {
 		}
 		
 		applyForce(deltaTime, moveXAxis, moveYAxis);
-		
-		/*
-		
-		// apply down force for straight down drop to lower tile
-		
-		if (dropDistance > 0 &&
-			tileSlant == Constants.NIL) {
-			
-			position.y += -Constants.WORLD_TO_BOX;
-			
-		}
-		
-		*/
 		
 	}
 	

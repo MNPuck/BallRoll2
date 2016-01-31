@@ -120,6 +120,9 @@ public class Level {
 	// current slant
 	private int tileSlant;
 	
+	// current anti slant
+	private int antiSlant;
+	
 	// first update 
 	private boolean firstUpdate;
 	
@@ -187,6 +190,9 @@ public class Level {
 		
 		// slant
 		tileSlant = Constants.NIL;
+		
+		// anti slant
+		antiSlant = Constants.NIL;
 		
 		// set first update 
 		firstUpdate = true;
@@ -278,27 +284,7 @@ public class Level {
 			String slant = (String) cell.getTile().getProperties().get("Slant");
 			tileSlant = Integer.parseInt(slant.trim());
 			
-			// drop down to flat tile
-			
-			/*
-			
-			if (ballHeight < saveBallHeight &&
-				tileSlant == Constants.NIL ) {
-			
-				dropDistance = (saveBallHeight - ballHeight) * Constants.DROP_DISTANCE;
-				saveBallHeight = ballHeight;
-				
-			}
-			
-			*/
-			
-			/*
-						
-				TiledMapTile tile = map.getTileSets().getTileSet("Tiles").getTile(12);
-				cell.setTile(tile);
-				layer1.setCell(mapX, mapY, cell);
-			
-			*/
+			antiSlant = getAntiSlant(tileSlant);
 
 		}
 		
@@ -487,7 +473,7 @@ public class Level {
 		
 		// ball update
 		
-		ball.update(deltaTime, moveDirection, dropDistance, tileSlant, tileHeight);
+		ball.update(deltaTime, moveDirection, dropDistance, tileSlant, antiSlant, tileHeight);
 		moveDirection = Constants.NIL;
 	
 	}
@@ -568,7 +554,7 @@ public class Level {
 		
 	}
 	
-	private Vector2 screenToMap (Vector2 position, boolean clamp) {
+	private Vector2 screenToMap(Vector2 position, boolean clamp) {
 		
 		Vector2 mapPos = new Vector2(0,0);
 		
@@ -577,8 +563,6 @@ public class Level {
 		
 		float screenPosX = position.x;
 		float screenPosY = - position.y;
-		
-		// float screenPosY = - position.y + ( ballHeight * .5f);
 		
 		// calculate map position
 		
@@ -595,6 +579,27 @@ public class Level {
 
 		return mapPos;
 		
+	}
+	
+	private int getAntiSlant(int slant) {
+
+		if (slant == Constants.NIL)
+			return Constants.NIL;
+		
+		if (slant == Constants.NW)
+			return Constants.SE;
+		
+		if (slant == Constants.NE)
+			return Constants.SW;
+		
+		if (slant == Constants.SW)
+			return Constants.NE;
+		
+		if (slant == Constants.SE)
+			return Constants.NW;
+		
+		return Constants.NIL;
+				
 	}
 	
 	private void loadLevel() {
