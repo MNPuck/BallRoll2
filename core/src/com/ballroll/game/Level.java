@@ -114,6 +114,12 @@ public class Level {
 	// tile height
 	private int tileHeight;
 	
+	// current layer
+	private int currentLayer;
+	
+	// save layer
+	private int saveLayer;
+	
 	// save ball height
 	private int saveBallHeight;
 	
@@ -125,6 +131,9 @@ public class Level {
 	
 	// first update 
 	private boolean firstUpdate;
+	
+	// ball out of bounds
+	private boolean ballOut;
 	
 	public Level (int levelNumberIn) {
 
@@ -196,6 +205,15 @@ public class Level {
 		
 		// set first update 
 		firstUpdate = true;
+		
+		// set ball out to false
+		ballOut = false;
+		
+		// set current layer to 1
+		currentLayer = 1;
+		
+		// set save layer to 9
+		saveLayer = 9;
 	
 	}
 	
@@ -227,7 +245,7 @@ public class Level {
 		
 		if (isRightClicked) {
 			
-			ball.setBallPosition(scrCoords, tileSlant, tileHeight);
+			ball.setBallPosition(scrCoords, tileSlant, tileHeight, currentLayer);
 			
 		}
 		
@@ -274,19 +292,48 @@ public class Level {
 		int mapX = (int) ballMapPos.x;
 		int mapY =  Constants.MAP_HEIGHT - (int) ballMapPos.y - 1;
 		
-		Cell cell = layer1.getCell(mapX, mapY);
+		// get layer 2 cell
+		
+		Cell cell = layer2.getCell(mapX, mapY);
 		
 		if (cell != null) {
 			
-			String height = (String) cell.getTile().getProperties().get("Height");
-			tileHeight = Integer.parseInt(height.trim());
+			currentLayer = 2;
+			fetchCell(cell, currentLayer);
+			ballOut = false;
 			
-			String slant = (String) cell.getTile().getProperties().get("Slant");
-			tileSlant = Integer.parseInt(slant.trim());
-			
-			antiSlant = getAntiSlant(tileSlant);
-
 		}
+		
+		else {
+
+			// get layer 1 cell
+			
+			if (saveLayer == currentLayer)
+				cell = layer1.getCell(mapX, mapY);
+			
+			if (saveLayer == currentLayer + 1)
+				cell = layer1.getCell(mapX + 1, mapY);
+			
+			if (saveLayer == currentLayer - 1)
+				cell = layer1.getCell(mapX - 1, mapY);
+		
+			if (cell != null) {
+			
+				currentLayer = 1;
+				fetchCell(cell, currentLayer);
+				ballOut = false;
+
+			}
+		
+			else {
+			
+				ballOut = true;
+			
+			}
+			
+		}
+		
+		saveLayer = currentLayer;
 		
 		if (firstUpdate) {
 			
@@ -419,6 +466,48 @@ public class Level {
 	
 	private boolean isTouchLeft(Vector2 scrCoords) {
 		
+		if (scrCoords.x < Constants.VIEWPORT_GUI_WIDTH * .5f)
+			
+			return true;
+		
+		return false;
+			
+	}
+	
+	private boolean isTouchRight(Vector2 scrCoords) {
+		
+		if (scrCoords.x > Constants.VIEWPORT_GUI_WIDTH * .5f)
+			
+			return true;
+		
+		return false;
+			
+	}
+	
+	private boolean isTouchUp(Vector2 scrCoords) {
+		
+		if (scrCoords.y < Constants.VIEWPORT_GUI_HEIGHT * .5f)
+			
+			return true;
+		
+		return false;
+			
+	}
+	
+	private boolean isTouchDown(Vector2 scrCoords) {
+		
+		if (scrCoords.y > Constants.VIEWPORT_GUI_HEIGHT * .5f)
+			
+			return true;
+		
+		return false;
+			
+	}
+	
+	/*
+	
+	private boolean isTouchLeft(Vector2 scrCoords) {
+		
 		if (scrCoords.x > Constants.VIEWPORT_GUI_WIDTH * .5f - 100 &&
 			scrCoords.x < Constants.VIEWPORT_GUI_WIDTH * .5f &&
 			scrCoords.y > Constants.VIEWPORT_GUI_HEIGHT - 250 &&
@@ -469,11 +558,13 @@ public class Level {
 			
 	}
 	
+	*/
+	
 	private void ballUpdate(float deltaTime) {
 		
 		// ball update
 		
-		ball.update(deltaTime, moveDirection, dropDistance, tileSlant, antiSlant, tileHeight);
+		ball.update(deltaTime, moveDirection, dropDistance, tileSlant, antiSlant, tileHeight, currentLayer, ballOut);
 		moveDirection = Constants.NIL;
 	
 	}
@@ -600,6 +691,18 @@ public class Level {
 		
 		return Constants.NIL;
 				
+	}
+	
+	private void fetchCell(Cell cell, int layer) {
+		
+		String height = (String) cell.getTile().getProperties().get("Height");
+		tileHeight = Integer.parseInt(height.trim());
+			
+		String slant = (String) cell.getTile().getProperties().get("Slant");
+		tileSlant = Integer.parseInt(slant.trim());
+			
+		antiSlant = getAntiSlant(tileSlant);
+		
 	}
 	
 	private void loadLevel() {

@@ -228,9 +228,20 @@ public class WorldController extends InputAdapter {
 	
 	private void readUserInput(WorldRenderer worldRenderer) {
 		
+		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
+			
+			isLeftClicked = true;
+			isRightClicked = false;
+			
+			scrCoords.x = Gdx.input.getX();
+			scrCoords.y = Gdx.input.getY();
+	
+		}
+		
 		if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
 			
 			isRightClicked = true;
+			isLeftClicked = false;
 			
 			float coordX = Gdx.input.getX();
 			float coordY = Gdx.input.getY();
@@ -246,9 +257,14 @@ public class WorldController extends InputAdapter {
 			
 		}
 		
-		else {
+		if (!Gdx.input.isButtonPressed(Buttons.LEFT) &&
+			!Gdx.input.isButtonPressed(Buttons.RIGHT)) {
 			
+			isLeftClicked = false;
 			isRightClicked = false;
+			
+			scrCoords.x = 0;
+			scrCoords.y = 0;
 			
 		}
 
@@ -258,7 +274,7 @@ public class WorldController extends InputAdapter {
 	
 		// set up screen touch
 		
-		if (Gdx.input.justTouched()) {
+		if (Gdx.input.isTouched()) {
 			
 			isLeftClicked = true;
 			
@@ -333,6 +349,8 @@ public class WorldController extends InputAdapter {
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		
+		/*
+		
 		if (Gdx.app.getType() == ApplicationType.Desktop) {
 			
 			if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
@@ -354,6 +372,8 @@ public class WorldController extends InputAdapter {
 			}
 			
 		}
+		
+		*/
 		
 		return false;
 		

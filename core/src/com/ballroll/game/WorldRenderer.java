@@ -121,7 +121,7 @@ public class WorldRenderer implements Disposable {
 		renderGuiFpsCounter(batch);
 		
 		// draw ball graphic used for movement
-		renderGuiBallImage(batch);
+		// renderGuiBallImage(batch);
 		
 		// draw screen coords
 		// renderGuiBallMapPos(batch);
