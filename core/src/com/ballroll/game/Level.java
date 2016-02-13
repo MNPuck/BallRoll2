@@ -123,11 +123,17 @@ public class Level {
 	// save ball height
 	private int saveBallHeight;
 	
-	// current slant
+	// current slant 
 	private int tileSlant;
 	
 	// current anti slant
 	private int antiSlant;
+	
+	// input slant 1 int
+	private int inputSlant1;
+	
+	// input slnat 2 int
+	private int inputSlant2;
 	
 	// first update 
 	private boolean firstUpdate;
@@ -145,7 +151,7 @@ public class Level {
 		// level number
 		levelNumber = levelNumberIn;
 		
-		ballScreenPos = new Vector2(0,0);
+		ballScreenPos = new Vector2(0f,-1f);
 		// ballScreenPos.y += .50f;
 		
 		// Ball
@@ -167,10 +173,10 @@ public class Level {
 		
 		// fetch tiled map layers
 		layer1 = (TiledMapTileLayer) map.getLayers().get(0);
-		layer2 = (TiledMapTileLayer) map.getLayers().get(1);
-		layer3 = (TiledMapTileLayer) map.getLayers().get(2);
-		layer4 = (TiledMapTileLayer) map.getLayers().get(3);
-		layer5 = (TiledMapTileLayer) map.getLayers().get(4);
+		// layer2 = (TiledMapTileLayer) map.getLayers().get(1);
+		// layer3 = (TiledMapTileLayer) map.getLayers().get(2);
+		// layer4 = (TiledMapTileLayer) map.getLayers().get(3);
+		// layer5 = (TiledMapTileLayer) map.getLayers().get(4);
 		
 		// click touch start and end
 		
@@ -199,6 +205,8 @@ public class Level {
 		
 		// slant
 		tileSlant = Constants.NIL;
+		inputSlant1 = Constants.NIL;
+		inputSlant2 = Constants.NIL;
 		
 		// anti slant
 		antiSlant = Constants.NIL;
@@ -292,7 +300,12 @@ public class Level {
 		int mapX = (int) ballMapPos.x;
 		int mapY =  Constants.MAP_HEIGHT - (int) ballMapPos.y - 1;
 		
+		float remX = ballMapPos.x - mapX;
+		float remY = ((Constants.MAP_HEIGHT - ballMapPos.y - 1) - mapY) * -1;
+		
 		// get layer 2 cell
+		
+		/*
 		
 		Cell cell = layer2.getCell(mapX, mapY);
 		
@@ -305,22 +318,27 @@ public class Level {
 		}
 		
 		else {
+		
+		*/
 
 			// get layer 1 cell
+
+			Cell cell = layer1.getCell(mapX, mapY);
 			
-			if (saveLayer == currentLayer)
-				cell = layer1.getCell(mapX, mapY);
+			/*
 			
 			if (saveLayer == currentLayer + 1)
 				cell = layer1.getCell(mapX + 1, mapY);
 			
 			if (saveLayer == currentLayer - 1)
 				cell = layer1.getCell(mapX - 1, mapY);
+				
+			*/
 		
 			if (cell != null) {
 			
 				currentLayer = 1;
-				fetchCell(cell, currentLayer);
+				fetchCell(cell, currentLayer, remX, remY);
 				ballOut = false;
 
 			}
@@ -330,8 +348,6 @@ public class Level {
 				ballOut = true;
 			
 			}
-			
-		}
 		
 		saveLayer = currentLayer;
 		
@@ -693,14 +709,47 @@ public class Level {
 				
 	}
 	
-	private void fetchCell(Cell cell, int layer) {
+	private void fetchCell(Cell cell, int layer, float remX, float remY) {
+		
+		int cellId = cell.getTile().getId();
+		
+		Gdx.app.debug(TAG, "Cell Id " + cellId);
 		
 		String height = (String) cell.getTile().getProperties().get("Height");
 		tileHeight = Integer.parseInt(height.trim());
 			
-		String slant = (String) cell.getTile().getProperties().get("Slant");
-		tileSlant = Integer.parseInt(slant.trim());
+		String slant1 = (String) cell.getTile().getProperties().get("Slant1");
+		inputSlant1 = Integer.parseInt(slant1.trim());
+		
+		String slant2 = (String) cell.getTile().getProperties().get("Slant2");
+		inputSlant2 = Integer.parseInt(slant2.trim());
+		
+		if (inputSlant2 == Constants.NIL) {
 			
+			tileSlant = inputSlant1;
+			
+		}
+		
+		if (cellId == 13 ||
+			cellId == 16) {
+			
+			if (remX <= .5f)
+				tileSlant = inputSlant1;
+			else
+				tileSlant = inputSlant2;
+				
+		}
+		
+		if (cellId == 14 ||
+			cellId == 15) {
+			
+			if (remY <= .5f)
+				tileSlant = inputSlant1;
+			else
+				tileSlant = inputSlant2;
+			
+		}
+		
 		antiSlant = getAntiSlant(tileSlant);
 		
 	}

@@ -57,8 +57,8 @@ public class Ball extends AbstractGameObject {
 		
 		// init physics values
 		
-		terminalVelocity.x = 8.0f;
-		terminalVelocity.y = 4.0f;
+		terminalVelocity.x = 6.0f;
+		terminalVelocity.y = 3.0f;
 		friction.x = 3f;
 		friction.y = 1.5f;
 		accleration.x = .25f;
@@ -78,7 +78,7 @@ public class Ball extends AbstractGameObject {
 		
 		// height
 		
-		ballHeight = 2;
+		ballHeight = 1;
 		
 		// save tile slant
 		
@@ -124,7 +124,7 @@ public class Ball extends AbstractGameObject {
 		saveTileSlant = tileSlant;
 		saveTileHeight = tileHeight;
 		
-		ballHeight = tileHeight * layer;
+		// ballHeight = tileHeight * layer;
 		
 		bounce = false;
 		
@@ -155,12 +155,16 @@ public class Ball extends AbstractGameObject {
 				
 			}
 			
+			/*
+			
 			if (returnCurrentDirection() != tileSlant &&
 				returnCurrentDirection() != antiSlant) {
 				
 				bounce = true;
 				
 			}
+			
+			*/
 			
 		}
 		
@@ -178,8 +182,8 @@ public class Ball extends AbstractGameObject {
 			if (moveDirection == Constants.SE)
 				moveDirection = Constants.NW;
 				
-				velocity.x = - velocity.x;
-				velocity.y = - velocity.y;
+				velocity.x = - velocity.x * .5f;
+				velocity.y = - velocity.y * .5f;
 			
 		}
 		
@@ -194,6 +198,8 @@ public class Ball extends AbstractGameObject {
 		
 		// if going down ramp and changing layers, modify y position
 		
+		/*
+		
 		if (layer + 1 == saveLayer) {
 
 			if (returnCurrentDirection() == Constants.SE ||
@@ -206,6 +212,8 @@ public class Ball extends AbstractGameObject {
 
 		
 		}
+		
+		*/
 		
 		// apply player movement
 		
@@ -263,11 +271,9 @@ public class Ball extends AbstractGameObject {
 			if (tileSlant == returnCurrentDirection())
 				savePosY = position.y;
 			
-			if (antiSlant == returnCurrentDirection()) {
-				
+			if (antiSlant == returnCurrentDirection()) 
 				savePosY = position.y;
 					
-			}
 			
 			saveBallDirection = returnCurrentDirection();
 			

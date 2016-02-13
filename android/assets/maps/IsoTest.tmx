@@ -1,94 +1,138 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="isometric" renderorder="right-down" width="16" height="16" tilewidth="64" tileheight="32" nextobjectid="1">
- <tileset firstgid="1" name="Tiles" tilewidth="64" tileheight="64" tilecount="12">
+ <tileset firstgid="1" name="Tiles" tilewidth="64" tileheight="64" tilecount="16">
   <tile id="0">
    <properties>
     <property name="Height" value="0"/>
-    <property name="Slant" value="8"/>
+    <property name="Slant1" value="8"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/base1.png"/>
   </tile>
   <tile id="1">
    <properties>
     <property name="Height" value="0"/>
-    <property name="Slant" value="8"/>
+    <property name="Slant1" value="8"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/pathBox.png"/>
   </tile>
   <tile id="2">
    <properties>
     <property name="Height" value="1"/>
-    <property name="Slant" value="8"/>
+    <property name="Slant1" value="8"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/red2.png"/>
   </tile>
   <tile id="3">
    <properties>
     <property name="Height" value="1"/>
-    <property name="Slant" value="5"/>
+    <property name="Slant1" value="5"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/red3.png"/>
   </tile>
   <tile id="4">
    <properties>
     <property name="Height" value="1"/>
-    <property name="Slant" value="3"/>
+    <property name="Slant1" value="3"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/red4.png"/>
   </tile>
   <tile id="5">
    <properties>
     <property name="Height" value="1"/>
-    <property name="Slant" value="1"/>
+    <property name="Slant1" value="1"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/red5.png"/>
   </tile>
   <tile id="6">
    <properties>
     <property name="Height" value="1"/>
-    <property name="Slant" value="7"/>
+    <property name="Slant1" value="7"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/red6.png"/>
   </tile>
   <tile id="7">
    <properties>
     <property name="Height" value="2"/>
-    <property name="Slant" value="8"/>
+    <property name="Slant1" value="8"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/red7.png"/>
   </tile>
   <tile id="8">
    <properties>
     <property name="Height" value="2"/>
-    <property name="Slant" value="5"/>
+    <property name="Slant1" value="5"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/red8.png"/>
   </tile>
   <tile id="9">
    <properties>
     <property name="Height" value="2"/>
-    <property name="Slant" value="3"/>
+    <property name="Slant1" value="3"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/red9.png"/>
   </tile>
   <tile id="10">
    <properties>
     <property name="Height" value="2"/>
-    <property name="Slant" value="1"/>
+    <property name="Slant1" value="1"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/red10.png"/>
   </tile>
   <tile id="11">
    <properties>
     <property name="Height" value="2"/>
-    <property name="Slant" value="7"/>
+    <property name="Slant1" value="7"/>
+    <property name="Slant2" value="8"/>
    </properties>
    <image width="64" height="64" source="tiles/red11.png"/>
+  </tile>
+  <tile id="12">
+   <properties>
+    <property name="Height" value="1"/>
+    <property name="Slant1" value="5"/>
+    <property name="Slant2" value="3"/>
+   </properties>
+   <image width="64" height="64" source="tiles/red12.png"/>
+  </tile>
+  <tile id="13">
+   <properties>
+    <property name="Height" value="1"/>
+    <property name="Slant1" value="7"/>
+    <property name="Slant2" value="5"/>
+   </properties>
+   <image width="64" height="64" source="tiles/red13.png"/>
+  </tile>
+  <tile id="14">
+   <properties>
+    <property name="Height" value="1"/>
+    <property name="Slant1" value="1"/>
+    <property name="Slant2" value="3"/>
+   </properties>
+   <image width="64" height="64" source="tiles/red14.png"/>
+  </tile>
+  <tile id="15">
+   <properties>
+    <property name="Height" value="1"/>
+    <property name="Slant1" value="7"/>
+    <property name="Slant2" value="1"/>
+   </properties>
+   <image width="64" height="64" source="tiles/red15.png"/>
   </tile>
  </tileset>
  <layer name="Tile Layer 1" width="16" height="16">
   <data encoding="base64" compression="zlib">
-   eJzV0kEKgDAMRNGEWm3V+5/XLCx8AsFWRHHxFk0zmyFFRMppNdmoWUzCu8127Htf5CsoJFCHmQm4E82v/p4yw2i2ddfkn+VHOr7TEzMb9GTFZaL7jXrpvf+38gfEBQPH
+   eJzjYGBg4KAQM0MxKxAzQjE7EeLU0s8CxbxI6viIEIfpZyQTU0s/GxTzI8kJECE+Gv6j4U8pBgA1/wSd
   </data>
  </layer>
  <layer name="Tile Layer 2" width="16" height="16">
